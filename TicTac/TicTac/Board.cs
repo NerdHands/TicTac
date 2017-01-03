@@ -47,7 +47,7 @@ namespace TicTac
         {
             public static Pivot selectBest(Board board, Tile player)
             {
-                int max = -100;
+                int max = 0;
                 Pivot bestPivot = null;
                 int score = board.getState().getScore(player);
                 for (int row = 0; row < board.Count; row++)
@@ -55,9 +55,9 @@ namespace TicTac
                     for (int col = 0; col < board.FirstOrDefault().Count; col++)
                     {
                         if (board[row][col] == Tile.Blank) {
-                            board[row][col] = player;
-                            var fitnessValue = getFitness(board, new Pivot() { x = row, y = col }, player); //stopped working here before push
-                            board[row][col] = Tile.Blank;
+                            //board[row][col] = player;
+                            int fitnessValue = getFitness(board, new Pivot() { x = row, y = col }, player); //stopped working here before push
+                            //board[row][col] = Tile.Blank;
                             if (fitnessValue > max)
                             {
                                 max = fitnessValue;
@@ -68,8 +68,8 @@ namespace TicTac
                 }
                 if (bestPivot == null)
                 {
-                    var pivots = Pivot.GetEmptyPivots(board);
-                    bestPivot = pivots[new System.Random().Next(pivots.Count)];
+                    var pivots = Pivot.GetEmptyPoints(board);
+                    if (pivots.Count > 0) bestPivot = pivots[new System.Random().Next(pivots.Count)];
                 }
                 return bestPivot;
             }
@@ -77,24 +77,29 @@ namespace TicTac
             public static int getFitness(Board board, Pivot pivot, Tile player)
             {
                 var opponent = player == Tile.X ? Tile.O : Tile.X;
-                if (State.checkWin(board, pivot, opponent)) return -128;
+                if (State.checkWin(board, pivot, player)) return 128;
+                if (State.checkWin(board, pivot, opponent)) return 100;
 
-                int max = -200;
-                for (int row = 0; row < board.Count; row++)
-                {
-                    for (int col = 0; col < board.FirstOrDefault().Count; col++)
-                    {
-                        if (board[row][col] == Tile.Blank)
-                        {
-                            int value = -getFitness(board, new Pivot()
-                            {
-                                x = row,
-                                y = col
-                            }, opponent);
-                            if (value > max) max = value;
-                        }
-                    }
-                }
+                int max = 0;
+                //for (int row = 0; row < board.Count; row++)
+                //{
+                //    for (int col = 0; col < board.FirstOrDefault().Count; col++)
+                //    {
+                //        if (board[row][col] == Tile.Blank)
+                //        {
+                //            int value = -getFitness(board, new Pivot()
+                //            {
+                //                x = row,
+                //                y = col
+                //            }, opponent);
+                //            if (value > max)
+                //            {
+                //                max = value;
+                //                return max;
+                //            }
+                //        }
+                //    }
+                //}
                 return max;
             }
         }
@@ -162,22 +167,18 @@ namespace TicTac
             public static bool checkWin(Board board, Pivot pivot, Tile player)
             {
                 var blankTile = board[pivot.x][pivot.y];
+                int score = board.getState().getScore(player);
                 board.play(player, pivot.x, pivot.y); //mark the tile with the player
-                var ret = player == calcLeft(board, pivot) ||
-                    player == calcRight(board, pivot) ||
-                    player == calcTop(board, pivot) ||
-                    player == calcBottom(board, pivot) ||
-                    player == calcHorizontalMiddle(board, pivot) ||
-                    player == calcVerticalMiddle(board, pivot) ||
-                    player == calcLeftDiagonal(board, pivot) ||
-                    player == calcRightDiagonal(board, pivot); //check if win occurs
+
+                var ret = board.getState().getScore(player) > score;
                 board.play(blankTile, pivot.x, pivot.y); //restore tile to its original state
                 return ret;
             }
 
             private static Tile calcLeft(Board board, Pivot pivot)
             {
-                int x = pivot.x, y = pivot.y;
+                int x = pivot.x;
+                int y = pivot.y;
                 Tile a = board[y - 1][x - 1];
                 Tile b = board[y][x - 1];
                 Tile c = board[y + 1][x - 1];
@@ -362,14 +363,14 @@ namespace TicTac
                 return pivots;
             }
 
-            public static List<Pivot> GetEmptyPivots(Board board)
+            public static List<Pivot> GetEmptyPoints(Board board)
             {
                 var pivots = new List<Pivot>();
-                for (int x = 0; x <= board.Count - 1; x++)
+                for (int x = 0; x < board.Count; x++)
                 {
-                    for (int y = 0; y <= board[0].Count - 1; y++)
+                    for (int y = 0; y < board[0].Count; y++)
                     {
-                        if (board[x][y] == Tile.Blank) pivots.Add(new Pivot() { x = x, y = y });
+                        if (board[x][y].Equals(Tile.Blank)) pivots.Add(new Pivot() { x = x, y = y });
                     }
                 }
                 return pivots;

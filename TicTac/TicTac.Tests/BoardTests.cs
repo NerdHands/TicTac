@@ -15,7 +15,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestBoardIsEmpty()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/empty-board.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Board/empty-board.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -28,7 +28,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestXWinsRight()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/x-right-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/x-right-win.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -41,7 +41,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestXWinsLeft()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/x-left-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/x-left-win.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -54,7 +54,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestXWinsBottom()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/x-bottom-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/x-bottom-win.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -67,7 +67,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestXWinsTop()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/x-top-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/x-top-win.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -80,7 +80,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestXWinsLeftDiagonal()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/x-left-diagonal-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/x-left-diagonal-win.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -93,7 +93,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestXWinsRightDiagonal()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/x-right-diagonal-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/x-right-diagonal-win.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -106,7 +106,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestXWinsMiddleVertical()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/x-middle-vertical-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/x-middle-vertical-win.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -119,7 +119,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestXWinsMiddleHorizontal()
         {
-            string jsonData = System.IO.File.ReadAllText("Data/x-middle-horizontal-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/x-middle-horizontal-win.json");
             Assert.IsNotNull(jsonData);
             Assert.AreNotEqual(jsonData, String.Empty);
             Board board = JsonConvert.DeserializeObject<Board>(jsonData);
@@ -133,7 +133,7 @@ namespace TicTac.Tests {
         public void TestOWinsRight()
         {
             //Arrange
-            string jsonData = System.IO.File.ReadAllText("Data/o-right-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/o-right-win.json");
             var board = JsonConvert.DeserializeObject<Board>(jsonData);
             var state = board.getState();
 
@@ -145,7 +145,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestOWinsLeft() {
             //Arrange
-            string jsonData = System.IO.File.ReadAllText("Data/o-left-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/o-left-win.json");
             var board = JsonConvert.DeserializeObject<Board>(jsonData);
             var state = board.getState();
 
@@ -157,7 +157,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestOWinsTop() {
             //Arrange
-            string jsonData = System.IO.File.ReadAllText("Data/o-top-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/o-top-win.json");
             var board = JsonConvert.DeserializeObject<Board>(jsonData);
             var state = board.getState();
 
@@ -169,7 +169,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestOWinsBottom() {
             //Arrange
-            string jsonData = System.IO.File.ReadAllText("Data/o-bottom-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/o-bottom-win.json");
             var board = JsonConvert.DeserializeObject<Board>(jsonData);
             var state = board.getState();
 
@@ -181,7 +181,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestOWinsMidH() {
             //Arrange
-            string jsonData = System.IO.File.ReadAllText("Data/o-mid-h-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/o-mid-h-win.json");
             var board = JsonConvert.DeserializeObject<Board>(jsonData);
             var state = board.getState();
 
@@ -193,7 +193,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestOWinsMidV() {
             //Arrange
-            string jsonData = System.IO.File.ReadAllText("Data/o-mid-v-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/o-mid-v-win.json");
             var board = JsonConvert.DeserializeObject<Board>(jsonData);
             var state = board.getState();
 
@@ -205,7 +205,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestOWinsDiagonalRight() {
             //Arrange
-            string jsonData = System.IO.File.ReadAllText("Data/o-diag-r-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/o-diag-r-win.json");
             var board = JsonConvert.DeserializeObject<Board>(jsonData);
             var state = board.getState();
 
@@ -217,7 +217,7 @@ namespace TicTac.Tests {
         [TestMethod]
         public void TestOWinsDiagonalLeft() {
             //Arrange
-            string jsonData = System.IO.File.ReadAllText("Data/o-diag-l-win.json");
+            string jsonData = System.IO.File.ReadAllText("Data/Scores/o-diag-l-win.json");
             var board = JsonConvert.DeserializeObject<Board>(jsonData);
             var state = board.getState();
 

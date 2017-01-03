@@ -4,7 +4,7 @@
     {
         Oinvalid = 50,
         Xinvalid = 30,
-        Blank,
+        Blank = 0,
         X = 3,
         O = 5
     }
