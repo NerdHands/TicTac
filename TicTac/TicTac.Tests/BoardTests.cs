@@ -1,6 +1,4 @@
 ﻿using System;
-using TicTac;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,13 +7,13 @@ namespace TicTac.Tests {
     public class BoardTests {
 
         [TestMethod]
-        public void testThatWidthAndHeightAreSame() {
+        public void TestThatWidthAndHeightAreSame() {
             var board = new Board(3);
             Assert.AreEqual(board.Count, board[0].Count);
         }
 
         [TestMethod]
-        public void testBoardIsEmpty()
+        public void TestBoardIsEmpty()
         {
             string jsonData = System.IO.File.ReadAllText("Data/empty-board.json");
             Assert.IsNotNull(jsonData);
@@ -28,7 +26,7 @@ namespace TicTac.Tests {
         }
 
         [TestMethod]
-        public void testXWinsRight()
+        public void TestXWinsRight()
         {
             string jsonData = System.IO.File.ReadAllText("Data/x-right-win.json");
             Assert.IsNotNull(jsonData);
@@ -41,7 +39,7 @@ namespace TicTac.Tests {
         }
 
         [TestMethod]
-        public void testXWinsLeft()
+        public void TestXWinsLeft()
         {
             string jsonData = System.IO.File.ReadAllText("Data/x-left-win.json");
             Assert.IsNotNull(jsonData);
@@ -54,7 +52,7 @@ namespace TicTac.Tests {
         }
 
         [TestMethod]
-        public void testXWinsBottom()
+        public void TestXWinsBottom()
         {
             string jsonData = System.IO.File.ReadAllText("Data/x-bottom-win.json");
             Assert.IsNotNull(jsonData);
@@ -67,7 +65,7 @@ namespace TicTac.Tests {
         }
 
         [TestMethod]
-        public void testXWinsTop()
+        public void TestXWinsTop()
         {
             string jsonData = System.IO.File.ReadAllText("Data/x-top-win.json");
             Assert.IsNotNull(jsonData);
@@ -80,7 +78,7 @@ namespace TicTac.Tests {
         }
 
         [TestMethod]
-        public void testXWinsLeftDiagonal()
+        public void TestXWinsLeftDiagonal()
         {
             string jsonData = System.IO.File.ReadAllText("Data/x-left-diagonal-win.json");
             Assert.IsNotNull(jsonData);
@@ -93,7 +91,7 @@ namespace TicTac.Tests {
         }
 
         [TestMethod]
-        public void testXWinsRightDiagonal()
+        public void TestXWinsRightDiagonal()
         {
             string jsonData = System.IO.File.ReadAllText("Data/x-right-diagonal-win.json");
             Assert.IsNotNull(jsonData);
@@ -106,7 +104,7 @@ namespace TicTac.Tests {
         }
 
         [TestMethod]
-        public void testXWinsMiddleVertical()
+        public void TestXWinsMiddleVertical()
         {
             string jsonData = System.IO.File.ReadAllText("Data/x-middle-vertical-win.json");
             Assert.IsNotNull(jsonData);
@@ -119,7 +117,7 @@ namespace TicTac.Tests {
         }
 
         [TestMethod]
-        public void testXWinsMiddleHorizontal()
+        public void TestXWinsMiddleHorizontal()
         {
             string jsonData = System.IO.File.ReadAllText("Data/x-middle-horizontal-win.json");
             Assert.IsNotNull(jsonData);
@@ -129,6 +127,103 @@ namespace TicTac.Tests {
             var state = board.getState();
             Assert.AreEqual(state.xWinCount, 1);
             Assert.AreEqual(state.oWinCount, 0);
+        }
+
+        [TestMethod]
+        public void TestOWinsRight()
+        {
+            //Arrange
+            string jsonData = System.IO.File.ReadAllText("Data/o-right-win.json");
+            var board = JsonConvert.DeserializeObject<Board>(jsonData);
+            var state = board.getState();
+
+            //Assert
+            Assert.AreEqual(state.xWinCount, 0);
+            Assert.AreEqual(state.oWinCount, 1);
+        }
+
+        [TestMethod]
+        public void TestOWinsLeft() {
+            //Arrange
+            string jsonData = System.IO.File.ReadAllText("Data/o-left-win.json");
+            var board = JsonConvert.DeserializeObject<Board>(jsonData);
+            var state = board.getState();
+
+            //Assert
+            Assert.AreEqual(state.xWinCount, 0);
+            Assert.AreEqual(state.oWinCount, 1);
+        }
+
+        [TestMethod]
+        public void TestOWinsTop() {
+            //Arrange
+            string jsonData = System.IO.File.ReadAllText("Data/o-top-win.json");
+            var board = JsonConvert.DeserializeObject<Board>(jsonData);
+            var state = board.getState();
+
+            //Assert
+            Assert.AreEqual(state.xWinCount, 0);
+            Assert.AreEqual(state.oWinCount, 1);
+        }
+
+        [TestMethod]
+        public void TestOWinsBottom() {
+            //Arrange
+            string jsonData = System.IO.File.ReadAllText("Data/o-bottom-win.json");
+            var board = JsonConvert.DeserializeObject<Board>(jsonData);
+            var state = board.getState();
+
+            //Assert
+            Assert.AreEqual(state.xWinCount, 0);
+            Assert.AreEqual(state.oWinCount, 1);
+        }
+
+        [TestMethod]
+        public void TestOWinsMidH() {
+            //Arrange
+            string jsonData = System.IO.File.ReadAllText("Data/o-mid-h-win.json");
+            var board = JsonConvert.DeserializeObject<Board>(jsonData);
+            var state = board.getState();
+
+            //Assert
+            Assert.AreEqual(state.xWinCount, 0);
+            Assert.AreEqual(state.oWinCount, 1);
+        }
+
+        [TestMethod]
+        public void TestOWinsMidV() {
+            //Arrange
+            string jsonData = System.IO.File.ReadAllText("Data/o-mid-v-win.json");
+            var board = JsonConvert.DeserializeObject<Board>(jsonData);
+            var state = board.getState();
+
+            //Assert
+            Assert.AreEqual(state.xWinCount, 0);
+            Assert.AreEqual(state.oWinCount, 1);
+        }
+
+        [TestMethod]
+        public void TestOWinsDiagonalRight() {
+            //Arrange
+            string jsonData = System.IO.File.ReadAllText("Data/o-diag-r-win.json");
+            var board = JsonConvert.DeserializeObject<Board>(jsonData);
+            var state = board.getState();
+
+            //Assert
+            Assert.AreEqual(state.xWinCount, 0);
+            Assert.AreEqual(state.oWinCount, 1);
+        }
+
+        [TestMethod]
+        public void TestOWinsDiagonalLeft() {
+            //Arrange
+            string jsonData = System.IO.File.ReadAllText("Data/o-diag-l-win.json");
+            var board = JsonConvert.DeserializeObject<Board>(jsonData);
+            var state = board.getState();
+
+            //Assert
+            Assert.AreEqual(state.xWinCount, 0);
+            Assert.AreEqual(state.oWinCount, 1);
         }
     }
 }
