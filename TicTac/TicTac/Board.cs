@@ -49,7 +49,6 @@ namespace TicTac
             {
                 int max = 0;
                 Pivot bestPivot = null;
-                int score = board.getState().getScore(player);
                 for (int row = 0; row < board.Count; row++)
                 {
                     for (int col = 0; col < board.FirstOrDefault().Count; col++)

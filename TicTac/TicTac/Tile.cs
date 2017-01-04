@@ -7,7 +7,7 @@
         Blank = 0,
         X = 3,
         O = 5
-    }
+    } 
 
     public class Game
     {
@@ -15,3 +15,4 @@
         public const int OWON = 125;
     }
 }
+ 
