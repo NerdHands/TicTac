@@ -40,20 +40,21 @@ We are yet to determine what algorithm will be used to select the best position 
 
  - Greedy Search [from this quora article](https://www.quora.com/Is-there-a-way-to-never-lose-at-Tic-Tac-Toe/answer/Raziman-T-V)
 
- ### Select Best Position Algorithm
+ ## Select Best Position Algorithm
 
  _This is subject to improvement. Please try to improve if you find out how to.__
 
 Input: 
 ```python
  - PLAYER as X or O
- - OPPONENT = (PLAYER == X) ? O : X
+ - board as [...][...]
 ```
 
 Steps:
 ```python
  - set MAX to 0
  - set bestTile = null
+ - set OPPONENT = (PLAYER == X) ? O : X
  - loop for each row in board.rows
    - loop for each col in row.columns
      -if (board[row][col] == BLANK)
@@ -71,3 +72,11 @@ Steps:
      /*this section can be improved*/
  - return bestTile
  ```
+
+ ## More Information
+
+ For now, the select-best-position method only handles 3x3 boards. 
+ 
+ It can be enhanced by adding another method that splits a larger board into smaller 3x3 boards.
+ 
+ This method can then find the best position (local best) in each of the smaller boards, and return the ultimate best position (global best) in the end.
