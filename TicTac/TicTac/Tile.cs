@@ -7,11 +7,19 @@
         Blank = 0,
         X = 3,
         O = 5
-    } 
+    }
 
-    public class Game
+    public static class TileExtensions
     {
-        public const int XWON = 27;
-        public const int OWON = 125;
+        public static string toTileString(this Tile tile)
+        {
+            string ret = "";
+            if (tile == Tile.Blank) return "-";
+            else if (tile == Tile.X) return "x";
+            else if (tile == Tile.O) return "o";
+            else if (tile == Tile.Xinvalid) return "X";
+            else if (tile == Tile.Oinvalid) return "O";
+            return "-";
+        }
     }
 }

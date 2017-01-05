@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TicTac
 {
-    public class Board: List<Row>
+    public partial class Board: List<Row>
     {
         private State state { get; set; }
         public Board()
@@ -22,13 +22,18 @@ namespace TicTac
         public State getState()
         {
             if (state == null) this.state = new State(this);
-            state = State.calcScore(this);
+            state = State.calcScore(this, state);
             return state;
         } 
         
         public bool isEmpty()
         {
             return this.All(row => row.isEmpty());
+        }
+
+        public bool isFull()
+        {
+            return this.All(row => row.isFull());
         }
 
         public bool isValid()
@@ -43,337 +48,51 @@ namespace TicTac
             return this.getState();
         }
 
-        public class Move
+        public Board getBoard(Pivot pivot, int size = 3)
         {
-            public static Pivot selectBest(Board board, Tile player)
+            Board ret = new Board();
+            if (pivot.y + size > this.Count) throw new System.Exception("New Sub-Board Rows cannot be out of bounds of Parent Board");
+            if (pivot.x + size > this.FirstOrDefault().Count) throw new System.Exception("New Sub-Board Columns cannot be out of bounds of Parent Board");
+            for (int y = pivot.y; y < size + pivot.y; y++)
             {
-                int max = 0;
-                Pivot bestPivot = null;
-                for (int row = 0; row < board.Count; row++)
+                Row row = new Row();
+                for (int x = pivot.x; x < size + pivot.x; x++)
                 {
-                    for (int col = 0; col < board.FirstOrDefault().Count; col++)
-                    {
-                        if (board[row][col] == Tile.Blank) {
-                            //board[row][col] = player;
-                            int fitnessValue = getFitness(board, new Pivot() { x = row, y = col }, player); //stopped working here before push
-                            //board[row][col] = Tile.Blank;
-                            if (fitnessValue > max)
-                            {
-                                max = fitnessValue;
-                                bestPivot = new Pivot() { x = row, y = col };
-                            }
-                        }
-                    }
+                    row.Add((Tile)((int)this[y][x] + 0)); //make sure a copy and not a reference is passed into the new board
                 }
-                if (bestPivot == null)
-                {
-                    var pivots = Pivot.GetEmptyPoints(board);
-                    if (pivots.Count > 0) bestPivot = pivots[new System.Random().Next(pivots.Count)];
-                }
-                return bestPivot;
+                ret.Add(row);
             }
-
-            public static int getFitness(Board board, Pivot pivot, Tile player)
-            {
-                var opponent = player == Tile.X ? Tile.O : Tile.X;
-                if (State.checkWin(board, pivot, player)) return 128;
-                if (State.checkWin(board, pivot, opponent)) return 100;
-
-                int max = 0;
-                //for (int row = 0; row < board.Count; row++)
-                //{
-                //    for (int col = 0; col < board.FirstOrDefault().Count; col++)
-                //    {
-                //        if (board[row][col] == Tile.Blank)
-                //        {
-                //            int value = -getFitness(board, new Pivot()
-                //            {
-                //                x = row,
-                //                y = col
-                //            }, opponent);
-                //            if (value > max)
-                //            {
-                //                max = value;
-                //                return max;
-                //            }
-                //        }
-                //    }
-                //}
-                return max;
-            }
+            return ret;
         }
 
-        public class State
+        public string toJsonString()
         {
-            public int size { get; set; }
-            public int xWinCount { get; set; }
-            public int oWinCount { get; set; }
-            public State() { }
-
-            public State(Board board)
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append("[\n");
+            int count = 0;
+            this.ForEach(row =>
             {
-                this.size = board.Count;
-            }
-
-            public int getScore(Tile tile)
-            {
-                if (tile == Tile.X) return xWinCount;
-                else if (tile == Tile.O) return oWinCount;
-                else return 0;
-            }
-
-            public static State calcScore(Board board, State state = null)
-            {
-                if (state == null) state = new State(board);
-                var pivots = Pivot.GetPivots(board);
-                pivots.ForEach(pivot =>
-                {
-                    Tile left = calcLeft(board, pivot);
-                    if (left == Tile.X) state.xWinCount++;
-                    else if (left == Tile.O) state.oWinCount++;
-
-                    Tile right = calcRight(board, pivot);
-                    if (right == Tile.X) state.xWinCount++;
-                    else if (right == Tile.O) state.oWinCount++;
-
-                    Tile top = calcTop(board, pivot);
-                    if (top == Tile.X) state.xWinCount++;
-                    else if (top == Tile.O) state.oWinCount++;
-
-                    Tile bottom = calcBottom(board, pivot);
-                    if (bottom == Tile.X) state.xWinCount++;
-                    else if (bottom == Tile.O) state.oWinCount++;
-
-                    Tile vertMiddle = calcVerticalMiddle(board, pivot);
-                    if (vertMiddle == Tile.X) state.xWinCount++;
-                    else if (vertMiddle == Tile.O) state.oWinCount++;
-
-                    Tile horzMiddle = calcHorizontalMiddle(board, pivot);
-                    if (horzMiddle == Tile.X) state.xWinCount++;
-                    else if (horzMiddle == Tile.O) state.oWinCount++;
-
-                    Tile diagLeft = calcLeftDiagonal(board, pivot);
-                    if (diagLeft == Tile.X) state.xWinCount++;
-                    else if (diagLeft == Tile.O) state.oWinCount++;
-
-                    Tile diagRight = calcRightDiagonal(board, pivot);
-                    if (diagRight == Tile.X) state.xWinCount++;
-                    else if (diagRight == Tile.O) state.oWinCount++;
-                });
-                return state;
-            }
-
-            public static bool checkWin(Board board, Pivot pivot, Tile player)
-            {
-                var blankTile = board[pivot.x][pivot.y];
-                int score = board.getState().getScore(player);
-                board.play(player, pivot.x, pivot.y); //mark the tile with the player
-
-                var ret = board.getState().getScore(player) > score;
-                board.play(blankTile, pivot.x, pivot.y); //restore tile to its original state
-                return ret;
-            }
-
-            private static Tile calcLeft(Board board, Pivot pivot)
-            {
-                int x = pivot.x;
-                int y = pivot.y;
-                Tile a = board[y - 1][x - 1];
-                Tile b = board[y][x - 1];
-                Tile c = board[y + 1][x - 1];
-
-                int prod = (int)a * (int)b * (int)c;
-                if (prod == Game.XWON)
-                {
-                    a = b = c = Tile.Xinvalid;
-                    return Tile.X;
-                }
-                else if (prod == Game.OWON)
-                {
-                    a = b = c = Tile.Oinvalid;
-                    return Tile.O;
-                }
-                else return Tile.Blank;
-            }
-
-            private static Tile calcRight(Board board, Pivot pivot)
-            {
-                int x = pivot.x, y = pivot.y;
-                Tile a = board[y - 1][x + 1];
-                Tile b = board[y][x + 1];
-                Tile c = board[y + 1][x + 1];
-
-                int prod = (int)a * (int)b * (int)c;
-                if (prod == Game.XWON)
-                {
-                    a = b = c = Tile.Xinvalid;
-                    return Tile.X;
-                }
-                else if (prod == Game.OWON)
-                {
-                    a = b = c = Tile.Oinvalid;
-                    return Tile.O;
-                }
-                else return Tile.Blank;
-            }
-
-            private static Tile calcTop(Board board, Pivot pivot)
-            {
-                int x = pivot.x, y = pivot.y;
-                Tile a = board[y - 1][x - 1];
-                Tile b = board[y - 1][x];
-                Tile c = board[y - 1][x + 1];
-
-                int prod = (int)a * (int)b * (int)c;
-                if (prod == Game.XWON)
-                {
-                    a = b = c = Tile.Xinvalid;
-                    return Tile.X;
-                }
-                else if (prod == Game.OWON)
-                {
-                    a = b = c = Tile.Oinvalid;
-                    return Tile.O;
-                }
-                else return Tile.Blank;
-            }
-
-            private static Tile calcBottom(Board board, Pivot pivot)
-            {
-                int x = pivot.x, y = pivot.y;
-                Tile a = board[y + 1][x - 1];
-                Tile b = board[y + 1][x];
-                Tile c = board[y + 1][x + 1];
-
-                int prod = (int)a * (int)b * (int)c;
-                if (prod == Game.XWON)
-                {
-                    a = b = c = Tile.Xinvalid;
-                    return Tile.X;
-                }
-                else if (prod == Game.OWON)
-                {
-                    a = b = c = Tile.Oinvalid;
-                    return Tile.O;
-                }
-                else return Tile.Blank;
-            }
-
-            private static Tile calcHorizontalMiddle(Board board, Pivot pivot)
-            {
-                int x = pivot.x, y = pivot.y;
-                Tile a = board[y][x - 1];
-                Tile b = board[y][x];
-                Tile c = board[y][x + 1];
-
-                int prod = (int)a * (int)b * (int)c;
-                if (prod == Game.XWON)
-                {
-                    a = b = c = Tile.Xinvalid;
-                    return Tile.X;
-                }
-                else if (prod == Game.OWON)
-                {
-                    a = b = c = Tile.Oinvalid;
-                    return Tile.O;
-                }
-                else return Tile.Blank;
-            }
-
-            private static Tile calcVerticalMiddle(Board board, Pivot pivot)
-            {
-                int x = pivot.x, y = pivot.y;
-                Tile a = board[y - 1][x];
-                Tile b = board[y][x];
-                Tile c = board[y + 1][x];
-
-                int prod = (int)a * (int)b * (int)c;
-                if (prod == Game.XWON)
-                {
-                    a = b = c = Tile.Xinvalid;
-                    return Tile.X;
-                }
-                else if (prod == Game.OWON)
-                {
-                    a = b = c = Tile.Oinvalid;
-                    return Tile.O;
-                }
-                else return Tile.Blank;
-            }
-
-            private static Tile calcLeftDiagonal(Board board, Pivot pivot)
-            {
-                int x = pivot.x, y = pivot.y;
-                Tile a = board[y - 1][x - 1];
-                Tile b = board[y][x];
-                Tile c = board[y + 1][x + 1];
-
-                int prod = (int)a * (int)b * (int)c;
-                if (prod == Game.XWON)
-                {
-                    a = b = c = Tile.Xinvalid;
-                    return Tile.X;
-                }
-                else if (prod == Game.OWON)
-                {
-                    a = b = c = Tile.Oinvalid;
-                    return Tile.O;
-                }
-                else return Tile.Blank;
-            }
-
-            private static Tile calcRightDiagonal(Board board, Pivot pivot)
-            {
-                int x = pivot.x, y = pivot.y;
-                Tile a = board[y - 1][x + 1];
-                Tile b = board[y][x];
-                Tile c = board[y + 1][x - 1];
-
-                int prod = (int)a * (int)b * (int)c;
-                if (prod == Game.XWON)
-                {
-                    a = b = c = Tile.Xinvalid;
-                    return Tile.X;
-                }
-                else if (prod == Game.OWON)
-                {
-                    a = b = c = Tile.Oinvalid;
-                    return Tile.O;
-                }
-                else return Tile.Blank;
-            }
+                sb.Append(row.toJsonString());
+                count++;
+                if (count < this.Count) sb.Append(",\n");
+            });
+            sb.Append("\n]");
+            return sb.ToString();
         }
 
-        public class Pivot
+        public string toGameString()
         {
-            public int x { get; set; }
-            public int y { get; set; }
-
-            public static List<Pivot> GetPivots(Board board)
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append("[\n");
+            int count = 0;
+            this.ForEach(row =>
             {
-                var pivots = new List<Pivot>();
-                for (int x = 1; x < board.Count - 1; x++)
-                {
-                    for (int y = 1; y < board[0].Count - 1; y++)
-                    {
-                        pivots.Add(new Pivot() { x = x, y = y });
-                    }
-                }
-                return pivots;
-            }
-
-            public static List<Pivot> GetEmptyPoints(Board board)
-            {
-                var pivots = new List<Pivot>();
-                for (int x = 0; x < board.Count; x++)
-                {
-                    for (int y = 0; y < board[0].Count; y++)
-                    {
-                        if (board[x][y].Equals(Tile.Blank)) pivots.Add(new Pivot() { x = x, y = y });
-                    }
-                }
-                return pivots;
-            }
+                sb.Append(row.toGameString());
+                count++;
+                if (count < this.Count) sb.Append(",\n");
+            });
+            sb.Append("\n]");
+            return sb.ToString();
         }
     }
 }
